@@ -163,7 +163,7 @@ func flushEventQueue() {
 	cacher.FlushAdmCtrlStats()
 }
 
-///
+// /
 type localSystemInfo struct {
 	mutex sync.Mutex
 	stats share.ContainerStats
@@ -216,9 +216,9 @@ func main() {
 	log.WithFields(log.Fields{"version": Version}).Info("START")
 
 	// bootstrap := flag.Bool("b", false, "Bootstrap cluster")
-	join := flag.String("j", "", "Cluster join address")
-	adv := flag.String("a", "", "Cluster advertise address")
-	bind := flag.String("b", "", "Cluster bind address")
+	join := os.Getenv("CLUSTER_JOIN_ADDR")
+	adv := os.Getenv("CLUSTER_ADVERTISED_ADDR")
+	bind := os.Getenv("CLUSTER_BIND_ADDR")
 	rtSock := flag.String("u", "", "Container socket URL")
 	debug := flag.Bool("d", false, "Enable control path debug")
 	restPort := flag.Uint("p", api.DefaultControllerRESTAPIPort, "REST API server port")
@@ -244,24 +244,24 @@ func main() {
 		scanLog.SetLevel(log.DebugLevel)
 		ctrlEnv.debugCPath = true
 	}
-	if *join != "" {
+	if join != "" {
 		// Join addresses might not be all ready. Accept whatever input is, resolve them
 		// when starting the cluster.
-		joinAddr = *join
+		joinAddr = join
 		log.WithFields(log.Fields{"join": joinAddr}).Info()
 	}
-	if *adv != "" {
-		ips, err := utils.ResolveIP(*adv)
+	if adv != "" {
+		ips, err := utils.ResolveIP(adv)
 		if err != nil || len(ips) == 0 {
-			log.WithFields(log.Fields{"advertise": *adv}).Error("Invalid adv address. Exit!")
+			log.WithFields(log.Fields{"advertise": adv}).Error("Invalid adv address. Exit!")
 			os.Exit(-2)
 		}
 
 		advAddr = ips[0].String()
 		log.WithFields(log.Fields{"advertise": advAddr}).Info()
 	}
-	if *bind != "" {
-		bindAddr = *bind
+	if bind != "" {
+		bindAddr = bind
 		log.WithFields(log.Fields{"bind": bindAddr}).Info()
 	}
 	if *restPort > 65535 || *fedPort > 65535 || *rpcPort > 65535 || *lanPort > 65535 {

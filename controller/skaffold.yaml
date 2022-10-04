@@ -1,0 +1,19 @@
+apiVersion: skaffold/v2beta10
+kind: Config
+metadata:
+    name: myapp
+build:
+    artifacts:
+      - image: controller
+        context: /home/raul/Development/neuvector/neuvector/controller
+        docker:
+          dockerfile: Dockerfile
+
+
+deploy:
+  helm:
+    releases:
+      - name: neuvector
+        chartPath: core
+        artifactOverrides:
+          controller.fullImage: controller
