@@ -12,4 +12,4 @@ LABEL name="controller" \
 	  neuvector.rev="git.xxxx"
 
 
-ENTRYPOINT ["/usr/local/bin/monitor", "-c"]
+ENTRYPOINT ["/usr/local/bin/controller"]
